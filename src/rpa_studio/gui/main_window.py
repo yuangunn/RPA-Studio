@@ -15,6 +15,8 @@ from rpa_studio.gui.property_panel import PropertyPanel
 from rpa_studio.gui.execution_thread import ExecutionThread
 from rpa_studio.gui.schedule_view import ScheduleDialog
 from rpa_studio.gui.tray import SystemTray
+from rpa_studio.gui.element_picker import ElementPicker
+from rpa_studio.gui.variable_panel import VariablePanel
 from rpa_studio.locale_kr import LABELS
 from rpa_studio.models import Project
 
@@ -33,6 +35,7 @@ class MainWindow(QMainWindow):
         self._project = Project(name="새 프로젝트")
         self._project_path = None
         self._exec_thread: ExecutionThread | None = None
+        self._element_picker = None
 
         self._setup_menubar()
         self._setup_toolbar()
@@ -113,6 +116,14 @@ class MainWindow(QMainWindow):
 
         # Connect step selection to property panel
         self._step_editor.step_selected.connect(self._on_step_selected)
+        self._property_panel.pick_element_requested.connect(self._on_pick_element)
+
+        # Right: Variable Panel
+        self._var_dock = QDockWidget("📦 저장값", self)
+        self._var_panel = VariablePanel()
+        self._var_dock.setWidget(self._var_panel)
+        self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self._var_dock)
+        self._var_panel.variables_changed.connect(self._on_variables_changed)
 
         # Bottom: Log Panel
         self._log_dock = QDockWidget(LABELS["log_title"], self)
@@ -210,6 +221,7 @@ class MainWindow(QMainWindow):
             self._project_path = path
 
         self._project.steps = self._step_editor.get_steps()
+        self._project.variables = self._var_panel.get_variables()
         from rpa_studio.project.project_file import save_project
         from pathlib import Path
         save_project(self._project, Path(self._project_path))
@@ -226,6 +238,7 @@ class MainWindow(QMainWindow):
         self._project = load_project(Path(path))
         self._project_path = path
         self._step_editor.set_steps(self._project.steps)
+        self._var_panel.set_variables(self._project.variables)
         self.setWindowTitle(f"\U0001f916 RPA Studio \u2014 {self._project.name}")
         self.statusBar().showMessage("\ud504\ub85c\uc81d\ud2b8 \ub85c\ub4dc \uc644\ub8cc!", 3000)
 
@@ -233,12 +246,33 @@ class MainWindow(QMainWindow):
         self._project = Project(name="새 프로젝트")
         self._project_path = None
         self._step_editor.set_steps([])
+        self._var_panel.set_variables({})
         self.setWindowTitle("🤖 RPA Studio — 새 프로젝트")
         self.statusBar().showMessage("새 프로젝트 생성", 3000)
 
     def _on_step_selected(self, step_id: str):
         step = self._step_editor.get_selected_step()
         self._property_panel.set_step(step)
+
+    def _on_pick_element(self):
+        self._element_picker = ElementPicker()
+        self._element_picker.element_picked.connect(self._on_element_picked)
+        self._element_picker.cancelled.connect(self._on_element_cancelled)
+        self.hide()  # minimize RPA Studio
+        self._element_picker.start()
+
+    def _on_element_picked(self, info: dict):
+        self.show()
+        self.activateWindow()
+        self._property_panel.update_element_info(info)
+        self._log_panel.append_log(f"✅ 요소 선택 완료: {info.get('name', '')} [{info.get('control_type', '')}]")
+
+    def _on_element_cancelled(self):
+        self.show()
+        self.activateWindow()
+
+    def _on_variables_changed(self, variables: dict):
+        self._project.variables = variables
 
     def _on_mode_toggle(self, checked: bool):
         self._advanced_mode = checked

@@ -75,6 +75,17 @@ class StepWidget(QWidget):
         self.clicked.emit(self.step.id)
         super().mousePressEvent(event)
 
+    def mouseMoveEvent(self, event):
+        if event.buttons() == Qt.MouseButton.LeftButton:
+            from PyQt6.QtGui import QDrag
+            from PyQt6.QtCore import QMimeData
+            drag = QDrag(self)
+            mime = QMimeData()
+            mime.setText(f"step_reorder:{self.step.id}")
+            drag.setMimeData(mime)
+            drag.exec(Qt.DropAction.MoveAction)
+        super().mouseMoveEvent(event)
+
     def set_selected(self, selected: bool):
         self._selected = selected
         self._update_style()

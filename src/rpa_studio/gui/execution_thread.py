@@ -10,6 +10,9 @@ import rpa_studio.actions.keyboard_mouse
 import rpa_studio.actions.file_ops
 import rpa_studio.actions.excel_ops
 import rpa_studio.actions.notify
+import rpa_studio.actions.image_match
+import rpa_studio.actions.ocr
+import rpa_studio.actions.browser
 
 
 class ExecutionThread(QThread):

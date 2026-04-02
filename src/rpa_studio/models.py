@@ -32,6 +32,9 @@ class ActionType(str, Enum):
     # 화면 인식 (2차)
     IMAGE_SEARCH = "image_search"
     OCR_READ = "ocr_read"
+    # 브라우저
+    BROWSER_OPEN = "browser_open"
+    BROWSER_URL = "browser_url"
     # 기타
     NOTIFY = "notify"
 
@@ -56,10 +59,12 @@ ACTION_LABELS: dict[ActionType, str] = {
     ActionType.FOLDER_CREATE: "폴더 만들기",
     ActionType.IMAGE_SEARCH: "이미지 찾기",
     ActionType.OCR_READ: "텍스트 읽기(OCR)",
+    ActionType.BROWSER_OPEN: "브라우저 열기",
+    ActionType.BROWSER_URL: "웹사이트 열기",
     ActionType.NOTIFY: "알림 보내기",
 }
 
-LOCKED_ACTIONS = {ActionType.IMAGE_SEARCH, ActionType.OCR_READ}
+LOCKED_ACTIONS = set()  # All actions now implemented
 
 ACTION_CATEGORIES = {
     "🖥️ 앱 조작": [
@@ -78,6 +83,7 @@ ACTION_CATEGORIES = {
         ActionType.EXCEL_OPEN, ActionType.EXCEL_WRITE, ActionType.EXCEL_READ,
         ActionType.FILE_COPY, ActionType.FOLDER_CREATE,
     ],
+    "🌐 브라우저": [ActionType.BROWSER_OPEN, ActionType.BROWSER_URL],
     "🔍 화면 인식": [ActionType.IMAGE_SEARCH, ActionType.OCR_READ],
     "💬 기타": [ActionType.NOTIFY],
 }

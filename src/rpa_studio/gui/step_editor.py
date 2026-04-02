@@ -15,6 +15,7 @@ class StepEditor(QWidget):
         self._steps: list[Step] = []
         self._widgets: list[StepWidget] = []
         self._selected_id: str | None = None
+        self._drag_source_id: str | None = None
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(16, 8, 16, 8)
@@ -127,14 +128,51 @@ class StepEditor(QWidget):
             event.acceptProposedAction()
 
     def dropEvent(self, event):
-        action_value = event.mimeData().text()
+        text = event.mimeData().text()
+
+        # Internal reorder
+        if text.startswith("step_reorder:"):
+            step_id = text.split(":", 1)[1]
+            # Find drop position based on mouse Y
+            drop_index = self._get_drop_index(event.position().y())
+            self._reorder_step(step_id, drop_index)
+            return
+
+        # Palette drop (existing logic)
         try:
-            action_type = ActionType(action_value)
+            from rpa_studio.models import ActionType, LOCKED_ACTIONS, Step
+            action_type = ActionType(text)
         except ValueError:
             return
         if action_type in LOCKED_ACTIONS:
             from PyQt6.QtWidgets import QMessageBox
-            QMessageBox.information(self, "\uc54c\ub9bc", LABELS["locked_msg"])
+            from rpa_studio.locale_kr import LABELS
+            QMessageBox.information(self, "알림", LABELS["locked_msg"])
             return
         step = Step(type=action_type)
         self.add_step(step)
+
+    def _get_drop_index(self, y: float) -> int:
+        """Determine insertion index based on drop Y position."""
+        for i, w in enumerate(self._widgets):
+            widget_center = w.y() + w.height() / 2
+            if y < widget_center:
+                return i
+        return len(self._steps)
+
+    def _reorder_step(self, step_id: str, new_index: int):
+        """Move a step to a new position."""
+        old_index = None
+        for i, s in enumerate(self._steps):
+            if s.id == step_id:
+                old_index = i
+                break
+        if old_index is None:
+            return
+        step = self._steps.pop(old_index)
+        if new_index > old_index:
+            new_index -= 1
+        new_index = max(0, min(new_index, len(self._steps)))
+        self._steps.insert(new_index, step)
+        self._rebuild()
+        self.steps_changed.emit()

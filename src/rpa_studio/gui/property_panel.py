@@ -20,10 +20,10 @@ PROPERTY_SCHEMAS: dict[ActionType, list[tuple]] = {
         ("app_name", "앱 이름", "text", {}),
     ],
     ActionType.WINDOW_FOCUS: [
-        ("window_title", "창 제목", "text", {}),
+        ("window_title", "창 선택", "window_list", {}),
     ],
     ActionType.WINDOW_RESIZE: [
-        ("window_title", "창 제목", "text", {}),
+        ("window_title", "창 선택", "window_list", {}),
         ("action", "동작", "combo", {"choices": WINDOW_ACTIONS}),
     ],
     ActionType.UI_CLICK: [
@@ -78,8 +78,22 @@ PROPERTY_SCHEMAS: dict[ActionType, list[tuple]] = {
     ActionType.FOLDER_CREATE: [
         ("path", "폴더 경로", "text", {}),
     ],
-    ActionType.IMAGE_SEARCH: [],
-    ActionType.OCR_READ: [],
+    ActionType.BROWSER_OPEN: [
+        ("browser", "브라우저", "combo", {"choices": {"chrome": "Chrome", "edge": "Edge"}}),
+    ],
+    ActionType.BROWSER_URL: [
+        ("url", "웹사이트 주소", "text", {}),
+        ("browser", "브라우저", "combo", {"choices": {"chrome": "Chrome", "edge": "Edge"}}),
+    ],
+    ActionType.IMAGE_SEARCH: [
+        ("template_path", "찾을 이미지 파일", "file", {}),
+        ("confidence", "정확도 (0~1)", "float", {"min": 0.1, "max": 1.0}),
+        ("save_as", "결과 저장값 이름", "text", {}),
+    ],
+    ActionType.OCR_READ: [
+        ("lang", "인식 언어", "combo", {"choices": {"kor+eng": "한국어+영어", "eng": "영어만", "kor": "한국어만"}}),
+        ("save_as", "결과 저장값 이름", "text", {}),
+    ],
     ActionType.NOTIFY: [
         ("message", "알림 메시지", "text", {}),
     ],
@@ -192,6 +206,23 @@ class PropertyPanel(QWidget):
                     lambda _, k=param_key, combo=w: self._on_param_changed(k, combo.currentData())
                 )
                 self._add_field(label, w)
+            elif wtype == "window_list":
+                container = QWidget()
+                vl = QVBoxLayout(container)
+                vl.setContentsMargins(0, 0, 0, 0)
+                combo = QComboBox()
+                combo.setEditable(True)  # allow manual input too
+                # Populate with running windows
+                self._populate_windows(combo)
+                if current_val:
+                    combo.setCurrentText(str(current_val))
+                combo.currentTextChanged.connect(lambda val, k=param_key: self._on_param_changed(k, val))
+                refresh_btn = QPushButton("🔄 새로고침")
+                refresh_btn.clicked.connect(lambda _, c=combo: self._populate_windows(c))
+                vl.addWidget(combo)
+                vl.addWidget(refresh_btn)
+                self._add_field(label, container)
+                w = combo
             elif wtype == "file":
                 container = QWidget()
                 hl = QVBoxLayout(container)
@@ -245,6 +276,19 @@ class PropertyPanel(QWidget):
     def _on_wait_changed(self, value: float):
         if self._step:
             self._step.wait_after = value
+
+    def _populate_windows(self, combo: QComboBox):
+        combo.clear()
+        try:
+            import pywinauto
+            desktop = pywinauto.Desktop(backend="uia")
+            windows = desktop.windows()
+            for win in windows:
+                title = win.window_text()
+                if title and title.strip() and title != "":
+                    combo.addItem(title)
+        except Exception:
+            combo.addItem("(창 목록을 가져올 수 없습니다)")
 
     def _browse_file(self, line_edit: QLineEdit):
         path, _ = QFileDialog.getOpenFileName(self, "파일 선택")
