@@ -72,11 +72,15 @@ class StepWidget(QWidget):
         return ""
 
     def mousePressEvent(self, event):
+        self._drag_start_pos = event.position().toPoint()
         self.clicked.emit(self.step.id)
         super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
-        if event.buttons() == Qt.MouseButton.LeftButton:
+        if event.buttons() == Qt.MouseButton.LeftButton and hasattr(self, '_drag_start_pos'):
+            from PyQt6.QtWidgets import QApplication
+            if (event.position().toPoint() - self._drag_start_pos).manhattanLength() < QApplication.startDragDistance():
+                return  # 최소 이동 거리 미달 — 드래그 시작 안 함
             from PyQt6.QtGui import QDrag
             from PyQt6.QtCore import QMimeData
             drag = QDrag(self)

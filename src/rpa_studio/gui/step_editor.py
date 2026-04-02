@@ -24,15 +24,23 @@ class StepEditor(QWidget):
         self._header.setStyleSheet("color: #c9d1d9; font-size: 14px; font-weight: bold;")
         layout.addWidget(self._header)
 
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        scroll.setStyleSheet("QScrollArea { border: none; background: transparent; }")
+        self._scroll = QScrollArea()
+        self._scroll.setWidgetResizable(True)
+        self._scroll.setStyleSheet("QScrollArea { border: none; background: transparent; }")
+        self._scroll.setAcceptDrops(True)
         self._step_container = QWidget()
+        self._step_container.setAcceptDrops(True)
         self._step_layout = QVBoxLayout(self._step_container)
         self._step_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self._step_layout.setSpacing(4)
-        scroll.setWidget(self._step_container)
-        layout.addWidget(scroll, stretch=1)
+        self._scroll.setWidget(self._step_container)
+        layout.addWidget(self._scroll, stretch=1)
+
+        # Override scroll area drag/drop to forward to us
+        self._scroll.dragEnterEvent = self.dragEnterEvent
+        self._scroll.dropEvent = self.dropEvent
+        self._step_container.dragEnterEvent = self.dragEnterEvent
+        self._step_container.dropEvent = self.dropEvent
 
         add_btn = QPushButton(LABELS["add_step"])
         add_btn.setStyleSheet("QPushButton { border: 2px dashed #30363d; padding: 12px; color: #484f58; }")

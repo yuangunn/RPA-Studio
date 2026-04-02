@@ -107,6 +107,7 @@ class MainWindow(QMainWindow):
         self._palette = ActionPalette()
         self._palette_dock.setWidget(self._palette)
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self._palette_dock)
+        self._palette.action_double_clicked.connect(self._on_palette_double_click)
 
         # Right: Property Panel
         self._property_dock = QDockWidget(LABELS["prop_title"], self)
@@ -158,6 +159,15 @@ class MainWindow(QMainWindow):
         self._tray.schedule_requested.connect(self._on_tray_schedule)
         self._tray.quit_requested.connect(QApplication.quit)
         self._tray.show()
+
+    def _on_palette_double_click(self, action_value: str):
+        from rpa_studio.models import Step, ActionType
+        try:
+            action_type = ActionType(action_value)
+        except ValueError:
+            return
+        step = Step(type=action_type)
+        self._step_editor.add_step(step)
 
     def _on_tray_open(self):
         self.show()
