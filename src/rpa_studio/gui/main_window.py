@@ -10,6 +10,9 @@ from PyQt6.QtGui import QAction, QKeySequence, QUndoStack
 from rpa_studio.gui.style import DARK_THEME
 from rpa_studio.gui.action_palette import ActionPalette
 from rpa_studio.gui.step_editor import StepEditor
+from rpa_studio.gui.log_panel import LogPanel
+from rpa_studio.gui.property_panel import PropertyPanel
+from rpa_studio.gui.execution_thread import ExecutionThread
 from rpa_studio.locale_kr import LABELS
 from rpa_studio.models import Project
 
@@ -27,6 +30,7 @@ class MainWindow(QMainWindow):
         self._advanced_mode = False
         self._project = Project(name="새 프로젝트")
         self._project_path = None
+        self._exec_thread: ExecutionThread | None = None
 
         self._setup_toolbar()
         self._setup_central()
@@ -71,16 +75,20 @@ class MainWindow(QMainWindow):
         self._palette_dock.setWidget(self._palette)
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self._palette_dock)
 
-        # Right: Property Panel placeholder
+        # Right: Property Panel
         self._property_dock = QDockWidget(LABELS["prop_title"], self)
-        self._property_dock.setWidget(QLabel("속성 (준비 중)"))
+        self._property_panel = PropertyPanel()
+        self._property_dock.setWidget(self._property_panel)
         self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self._property_dock)
 
-        # Bottom: Log Panel placeholder
+        # Connect step selection to property panel
+        self._step_editor.step_selected.connect(self._on_step_selected)
+
+        # Bottom: Log Panel
         self._log_dock = QDockWidget(LABELS["log_title"], self)
-        self._log_dock.setWidget(QLabel("로그 (준비 중)"))
+        self._log_panel = LogPanel()
+        self._log_dock.setWidget(self._log_panel)
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self._log_dock)
-        self._log_dock.hide()
 
     def _setup_shortcuts(self):
         for text, key, slot in [
@@ -106,10 +114,35 @@ class MainWindow(QMainWindow):
     # --- Slots ---
 
     def _on_run(self):
-        pass  # Wired in Task 8
+        self._project.steps = self._step_editor.get_steps()
+        if not self._project.steps:
+            self._log_panel.append_log("실행할 단계가 없습니다.")
+            return
+
+        self._exec_thread = ExecutionThread(self._project, parent=self)
+        self._exec_thread.log_message.connect(self._log_panel.append_log)
+        self._exec_thread.error_occurred.connect(self._log_panel.append_log)
+        self._exec_thread.step_entered.connect(
+            lambda sid: self._log_panel.append_log(f"▶ 단계 시작: {sid}")
+        )
+        self._exec_thread.step_exited.connect(
+            lambda sid: self._log_panel.append_log(f"✔ 단계 완료: {sid}")
+        )
+        self._exec_thread.execution_finished.connect(self._on_execution_finished)
+
+        self._run_btn.setEnabled(False)
+        self._stop_btn.setEnabled(True)
+        self._log_panel.append_log("--- 실행 시작 ---")
+        self._exec_thread.start()
 
     def _on_stop(self):
-        pass  # Wired in Task 8
+        if self._exec_thread is not None:
+            self._exec_thread.stop()
+
+    def _on_execution_finished(self):
+        self._run_btn.setEnabled(True)
+        self._stop_btn.setEnabled(False)
+        self._log_panel.append_log("--- 완료! ---")
 
     def _on_record(self):
         pass  # Wired in Task 10
@@ -135,6 +168,10 @@ class MainWindow(QMainWindow):
         self._step_editor.set_steps([])
         self.setWindowTitle("🤖 RPA Studio — 새 프로젝트")
         self.statusBar().showMessage("새 프로젝트 생성", 3000)
+
+    def _on_step_selected(self, step_id: str):
+        step = self._step_editor.get_selected_step()
+        self._property_panel.set_step(step)
 
     def _on_mode_toggle(self, checked: bool):
         self._advanced_mode = checked
