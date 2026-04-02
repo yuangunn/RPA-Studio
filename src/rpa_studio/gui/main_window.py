@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from PyQt6.QtWidgets import (
     QMainWindow, QToolBar, QPushButton, QWidget, QLabel,
-    QDockWidget, QVBoxLayout, QFileDialog, QMessageBox,
+    QDockWidget, QVBoxLayout, QFileDialog, QMessageBox, QMenuBar, QApplication,
 )
 from PyQt6.QtCore import Qt, QSize, pyqtSignal
 from PyQt6.QtGui import QAction, QKeySequence, QUndoStack
@@ -13,6 +13,8 @@ from rpa_studio.gui.step_editor import StepEditor
 from rpa_studio.gui.log_panel import LogPanel
 from rpa_studio.gui.property_panel import PropertyPanel
 from rpa_studio.gui.execution_thread import ExecutionThread
+from rpa_studio.gui.schedule_view import ScheduleDialog
+from rpa_studio.gui.tray import SystemTray
 from rpa_studio.locale_kr import LABELS
 from rpa_studio.models import Project
 
@@ -32,10 +34,38 @@ class MainWindow(QMainWindow):
         self._project_path = None
         self._exec_thread: ExecutionThread | None = None
 
+        self._setup_menubar()
         self._setup_toolbar()
         self._setup_central()
         self._setup_docks()
         self._setup_shortcuts()
+        self._setup_tray()
+
+    def _setup_menubar(self):
+        menubar = self.menuBar()
+
+        # File menu
+        file_menu = menubar.addMenu("\ud30c\uc77c")
+        new_action = QAction("\uc0c8 \ud504\ub85c\uc81d\ud2b8", self)
+        new_action.setShortcut(QKeySequence.StandardKey.New)
+        new_action.triggered.connect(self._on_new)
+        file_menu.addAction(new_action)
+
+        save_action = QAction("\uc800\uc7a5", self)
+        save_action.setShortcut(QKeySequence.StandardKey.Save)
+        save_action.triggered.connect(self._on_save)
+        file_menu.addAction(save_action)
+
+        open_action = QAction("\uc5f4\uae30", self)
+        open_action.setShortcut(QKeySequence.StandardKey.Open)
+        open_action.triggered.connect(self._on_open)
+        file_menu.addAction(open_action)
+
+        # Tools menu
+        tools_menu = menubar.addMenu("\ub3c4\uad6c")
+        schedule_action = QAction(LABELS["schedule_title"], self)
+        schedule_action.triggered.connect(self._on_schedule)
+        tools_menu.addAction(schedule_action)
 
     def _setup_toolbar(self):
         tb = QToolBar("Main")
@@ -111,6 +141,29 @@ class MainWindow(QMainWindow):
         self.addAction(undo_action)
         self.addAction(redo_action)
 
+    def _setup_tray(self):
+        self._tray = SystemTray(self)
+        self._tray.open_requested.connect(self._on_tray_open)
+        self._tray.schedule_requested.connect(self._on_tray_schedule)
+        self._tray.quit_requested.connect(QApplication.quit)
+        self._tray.show()
+
+    def _on_tray_open(self):
+        self.show()
+        self.activateWindow()
+
+    def _on_schedule(self):
+        dlg = ScheduleDialog(self)
+        dlg.exec()
+
+    def _on_tray_schedule(self):
+        self._on_schedule()
+
+    def closeEvent(self, event):
+        event.ignore()
+        self.hide()
+        self._tray.show_message("RPA Studio", "백그라운드에서 실행 중입니다. 트레이 아이콘을 클릭하세요.")
+
     # --- Slots ---
 
     def _on_run(self):
@@ -161,6 +214,20 @@ class MainWindow(QMainWindow):
         from pathlib import Path
         save_project(self._project, Path(self._project_path))
         self.statusBar().showMessage("저장 완료!", 3000)
+
+    def _on_open(self):
+        path, _ = QFileDialog.getOpenFileName(
+            self, "\ud504\ub85c\uc81d\ud2b8 \uc5f4\uae30", "", "RPA \ud504\ub85c\uc81d\ud2b8 (*.json)"
+        )
+        if not path:
+            return
+        from rpa_studio.project.project_file import load_project
+        from pathlib import Path
+        self._project = load_project(Path(path))
+        self._project_path = path
+        self._step_editor.set_steps(self._project.steps)
+        self.setWindowTitle(f"\U0001f916 RPA Studio \u2014 {self._project.name}")
+        self.statusBar().showMessage("\ud504\ub85c\uc81d\ud2b8 \ub85c\ub4dc \uc644\ub8cc!", 3000)
 
     def _on_new(self):
         self._project = Project(name="새 프로젝트")
