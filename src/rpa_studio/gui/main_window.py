@@ -8,6 +8,8 @@ from PyQt6.QtCore import Qt, QSize, pyqtSignal
 from PyQt6.QtGui import QAction, QKeySequence, QUndoStack
 
 from rpa_studio.gui.style import DARK_THEME
+from rpa_studio.gui.action_palette import ActionPalette
+from rpa_studio.gui.step_editor import StepEditor
 from rpa_studio.locale_kr import LABELS
 from rpa_studio.models import Project
 
@@ -59,16 +61,14 @@ class MainWindow(QMainWindow):
         tb.addWidget(self._mode_btn)
 
     def _setup_central(self):
-        # Placeholder — replaced by StepEditor in Task 6
-        self._central = QWidget()
-        layout = QVBoxLayout(self._central)
-        layout.addWidget(QLabel("📋 스텝 에디터 (준비 중)"))
-        self.setCentralWidget(self._central)
+        self._step_editor = StepEditor()
+        self.setCentralWidget(self._step_editor)
 
     def _setup_docks(self):
-        # Left: Action Palette placeholder
+        # Left: Action Palette
         self._palette_dock = QDockWidget("작업 추가", self)
-        self._palette_dock.setWidget(QLabel("팔레트 (준비 중)"))
+        self._palette = ActionPalette()
+        self._palette_dock.setWidget(self._palette)
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self._palette_dock)
 
         # Right: Property Panel placeholder
@@ -123,6 +123,7 @@ class MainWindow(QMainWindow):
                 return
             self._project_path = path
 
+        self._project.steps = self._step_editor.get_steps()
         from rpa_studio.project.project_file import save_project
         from pathlib import Path
         save_project(self._project, Path(self._project_path))
@@ -131,6 +132,7 @@ class MainWindow(QMainWindow):
     def _on_new(self):
         self._project = Project(name="새 프로젝트")
         self._project_path = None
+        self._step_editor.set_steps([])
         self.setWindowTitle("🤖 RPA Studio — 새 프로젝트")
         self.statusBar().showMessage("새 프로젝트 생성", 3000)
 
