@@ -1,5 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import './i18n'
+import { initApiClient } from './api/client'
 import { Toolbar } from './components/layout/Toolbar'
 import { ActionPalette } from './components/palette/ActionPalette'
 import { StepListEditor } from './components/editor/StepListEditor'
@@ -9,12 +10,29 @@ import { useProjectStore } from './stores/projectStore'
 
 export default function App() {
   const { newProject, projectName } = useProjectStore()
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    if (!projectName) {
-      newProject('새 프로젝트').catch(console.error)
+    async function init() {
+      await initApiClient()
+      if (!projectName) {
+        await newProject('새 프로젝트').catch(console.error)
+      }
+      setReady(true)
     }
+    init()
   }, [])
+
+  if (!ready) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-base text-text">
+        <div className="text-center">
+          <div className="text-4xl mb-4">🤖</div>
+          <div className="text-subtext text-sm">RPA Studio 로딩 중...</div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="h-screen flex flex-col bg-base text-text">

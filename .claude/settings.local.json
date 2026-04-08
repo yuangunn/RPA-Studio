@@ -7,7 +7,17 @@
       "Bash(cp -r src/rpa_studio/actions backend/)",
       "Bash(cp -r src/rpa_studio/scheduler backend/)",
       "Bash(rm -rf tests docs)",
-      "Bash(find backend:*)"
+      "Bash(find backend:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(netstat -ano)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(curl -s http://127.0.0.1:58900/api/health)",
+      "Bash(tasklist)",
+      "Bash(taskkill /f /im electron.exe)",
+      "Bash(taskkill //f //im electron.exe)",
+      "Bash(taskkill //f //pid 19668)",
+      "Bash(taskkill //f //pid 64228)"
     ]
   }
 }

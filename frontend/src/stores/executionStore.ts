@@ -35,8 +35,15 @@ export const useExecutionStore = create<ExecutionState>((set, get) => ({
       const { execution_id } = await api.startExecution(projectName)
       set({ isRunning: true, executionId: execution_id, error: null })
 
-      // Connect WebSocket
-      const wsUrl = `ws://${window.location.host}/ws/execution/${execution_id}`
+      // Connect WebSocket — use backend port if in Electron
+      let wsHost = window.location.host
+      if ((window as any).electronAPI) {
+        try {
+          const port = await (window as any).electronAPI.getBackendPort()
+          if (port) wsHost = `127.0.0.1:${port}`
+        } catch {}
+      }
+      const wsUrl = `ws://${wsHost}/ws/execution/${execution_id}`
       const ws = new WebSocket(wsUrl)
 
       ws.onmessage = (event) => {

@@ -1,0 +1,21 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "backend",
+      "runtimeExecutable": "C:\\Users\\Helios_Neo_18\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "runtimeArgs": ["-m", "uvicorn", "rpa_studio.api.server:app", "--host", "127.0.0.1", "--port", "8750"],
+      "port": 8750,
+      "env": {
+        "PYTHONPATH": "backend"
+      }
+    },
+    {
+      "name": "frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5173,
+      "cwd": "frontend"
+    }
+  ]
+}

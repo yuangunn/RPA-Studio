@@ -1,9 +1,30 @@
 /** HTTP client for the Python backend API. */
 
-const BASE_URL = '/api'
+// In Electron, get port from preload bridge. In browser dev, use Vite proxy.
+let _baseUrl = '/api'
+
+export async function initApiClient() {
+  if ((window as any).electronAPI) {
+    try {
+      const port = await (window as any).electronAPI.getBackendPort()
+      if (port) {
+        _baseUrl = `http://127.0.0.1:${port}/api`
+        console.log(`[API] Using Electron backend at port ${port}`)
+      }
+    } catch {
+      console.log('[API] No Electron API, using Vite proxy')
+    }
+  }
+}
+
+function getBaseUrl(): string {
+  return _baseUrl
+}
+
+const BASE_URL_GETTER = () => getBaseUrl()
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const res = await fetch(`${getBaseUrl()}${path}`, {
     headers: { 'Content-Type': 'application/json' },
     ...options,
   })
