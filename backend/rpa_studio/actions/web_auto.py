@@ -19,7 +19,7 @@ def _get_browser(context: ExecutionContext):
     pw = sync_playwright().start()
     context.variables["_pw_instance"] = pw
 
-    browser = pw.chromium.launch(headless=False)
+    browser = pw.chromium.launch(headless=False, channel="chrome")
     context.variables["_pw_browser"] = browser
 
     page = browser.new_page()
@@ -51,7 +51,9 @@ class WebOpenHandler(ActionHandler):
 
     def execute(self, step: Step, context: ExecutionContext):
         url = context.resolve(step.params.get("url", "about:blank"))
-        headless = step.params.get("headless", False)
+        headless = step.params.get("headless", "false")
+        if isinstance(headless, str):
+            headless = headless.lower() == "true"
         context.add_log(f"웹 브라우저 시작: {url}")
 
         from playwright.sync_api import sync_playwright
@@ -62,7 +64,8 @@ class WebOpenHandler(ActionHandler):
         pw = sync_playwright().start()
         context.variables["_pw_instance"] = pw
 
-        browser = pw.chromium.launch(headless=headless)
+        # Use system Chrome (channel='chrome') — more reliable than bundled Chromium
+        browser = pw.chromium.launch(headless=headless, channel="chrome")
         context.variables["_pw_browser"] = browser
 
         page = browser.new_page()

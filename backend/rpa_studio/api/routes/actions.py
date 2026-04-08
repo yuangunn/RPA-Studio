@@ -98,6 +98,7 @@ ACTION_PARAM_SCHEMAS: dict[str, list[dict]] = {
          "choices": {"chrome": "Chrome", "edge": "Edge"}},
     ],
     "notify": [
+        {"key": "title", "label": "알림 제목", "type": "text"},
         {"key": "message", "label": "알림 메시지", "type": "text"},
     ],
     # 웹 자동화 (Playwright)

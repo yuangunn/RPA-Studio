@@ -9,6 +9,7 @@ import { LogViewer } from './components/log/LogViewer'
 import { VariablePanel } from './components/log/VariablePanel'
 import { ProjectModal } from './components/modals/ProjectModal'
 import { ScheduleModal } from './components/modals/ScheduleModal'
+import { ToastContainer } from './components/layout/Toast'
 import { useProjectStore } from './stores/projectStore'
 
 export default function App() {
@@ -56,6 +57,7 @@ export default function App() {
 
       {showProjectModal && <ProjectModal onClose={() => setShowProjectModal(false)} />}
       {showScheduleModal && <ScheduleModal onClose={() => setShowScheduleModal(false)} />}
+      <ToastContainer />
     </div>
   )
 }
