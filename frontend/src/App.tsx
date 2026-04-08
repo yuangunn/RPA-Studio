@@ -8,12 +8,14 @@ import { PropertyPanel } from './components/properties/PropertyPanel'
 import { LogViewer } from './components/log/LogViewer'
 import { VariablePanel } from './components/log/VariablePanel'
 import { ProjectModal } from './components/modals/ProjectModal'
+import { ScheduleModal } from './components/modals/ScheduleModal'
 import { useProjectStore } from './stores/projectStore'
 
 export default function App() {
   const { newProject, loadProject, projectName } = useProjectStore()
   const [ready, setReady] = useState(false)
   const [showProjectModal, setShowProjectModal] = useState(false)
+  const [showScheduleModal, setShowScheduleModal] = useState(false)
 
   useEffect(() => {
     async function init() {
@@ -43,7 +45,7 @@ export default function App() {
 
   return (
     <div className="h-screen flex flex-col bg-base text-text">
-      <Toolbar onOpenProject={() => setShowProjectModal(true)} />
+      <Toolbar onOpenProject={() => setShowProjectModal(true)} onOpenSchedule={() => setShowScheduleModal(true)} />
       <div className="flex-1 flex overflow-hidden">
         <ActionPalette />
         <StepListEditor />
@@ -52,9 +54,8 @@ export default function App() {
       <VariablePanel />
       <LogViewer />
 
-      {showProjectModal && (
-        <ProjectModal onClose={() => setShowProjectModal(false)} />
-      )}
+      {showProjectModal && <ProjectModal onClose={() => setShowProjectModal(false)} />}
+      {showScheduleModal && <ScheduleModal onClose={() => setShowScheduleModal(false)} />}
     </div>
   )
 }

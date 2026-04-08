@@ -5,7 +5,7 @@ import { useExecutionStore } from '../../stores/executionStore'
 import * as api from '../../api/client'
 import { useState } from 'react'
 
-export function Toolbar({ onOpenProject }: { onOpenProject?: () => void }) {
+export function Toolbar({ onOpenProject, onOpenSchedule }: { onOpenProject?: () => void; onOpenSchedule?: () => void }) {
   const { t } = useTranslation()
   const { projectName, dirty, saveProject, newProject, addStep, loadProject } = useProjectStore()
   const { isRunning, startExecution, stopExecution, addLog } = useExecutionStore()
@@ -72,6 +72,15 @@ export function Toolbar({ onOpenProject }: { onOpenProject?: () => void }) {
         }`}
       >
         <Circle size={14} /> {isRecording ? '⏹ 녹화 중지' : t('toolbar.record')}
+      </button>
+
+      <div className="w-px h-6 bg-surface0" />
+
+      <button
+        onClick={onOpenSchedule}
+        className="flex items-center gap-1.5 px-3 py-1.5 text-subtext rounded-lg text-xs hover:bg-surface0 transition-colors"
+      >
+        📅 스케줄
       </button>
 
       <div className="flex-1" />
