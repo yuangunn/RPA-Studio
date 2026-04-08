@@ -6,17 +6,19 @@ import { ActionPalette } from './components/palette/ActionPalette'
 import { StepListEditor } from './components/editor/StepListEditor'
 import { PropertyPanel } from './components/properties/PropertyPanel'
 import { LogViewer } from './components/log/LogViewer'
+import { VariablePanel } from './components/log/VariablePanel'
+import { ProjectModal } from './components/modals/ProjectModal'
 import { useProjectStore } from './stores/projectStore'
 
 export default function App() {
   const { newProject, loadProject, projectName } = useProjectStore()
   const [ready, setReady] = useState(false)
+  const [showProjectModal, setShowProjectModal] = useState(false)
 
   useEffect(() => {
     async function init() {
       await initApiClient()
       if (!projectName) {
-        // Try to load existing project, create new if not found
         try {
           await loadProject('새 프로젝트')
         } catch {
@@ -41,13 +43,18 @@ export default function App() {
 
   return (
     <div className="h-screen flex flex-col bg-base text-text">
-      <Toolbar />
+      <Toolbar onOpenProject={() => setShowProjectModal(true)} />
       <div className="flex-1 flex overflow-hidden">
         <ActionPalette />
         <StepListEditor />
         <PropertyPanel />
       </div>
+      <VariablePanel />
       <LogViewer />
+
+      {showProjectModal && (
+        <ProjectModal onClose={() => setShowProjectModal(false)} />
+      )}
     </div>
   )
 }

@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next'
-import { Play, Square, Circle, Save, FolderOpen, FilePlus, FolderOpen as Open } from 'lucide-react'
+import { Play, Square, Circle, Save, FolderOpen, FilePlus } from 'lucide-react'
 import { useProjectStore } from '../../stores/projectStore'
 import { useExecutionStore } from '../../stores/executionStore'
 import * as api from '../../api/client'
 import { useState } from 'react'
 
-export function Toolbar() {
+export function Toolbar({ onOpenProject }: { onOpenProject?: () => void }) {
   const { t } = useTranslation()
   const { projectName, dirty, saveProject, newProject, addStep, loadProject } = useProjectStore()
   const { isRunning, startExecution, stopExecution, addLog } = useExecutionStore()
@@ -82,6 +82,13 @@ export function Toolbar() {
         className="flex items-center gap-1.5 px-3 py-1.5 text-subtext rounded-lg text-xs hover:bg-surface0 transition-colors"
       >
         <FilePlus size={14} /> {t('toolbar.new')}
+      </button>
+
+      <button
+        onClick={onOpenProject}
+        className="flex items-center gap-1.5 px-3 py-1.5 text-subtext rounded-lg text-xs hover:bg-surface0 transition-colors"
+      >
+        <FolderOpen size={14} /> {t('toolbar.open')}
       </button>
 
       <button
