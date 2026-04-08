@@ -1,0 +1,33 @@
+appId: com.yuangunn.rpa-studio
+productName: RPA Studio
+copyright: Copyright © 2026 yuangunn
+
+directories:
+  output: ../release
+
+files:
+  - dist/**/*
+  - package.json
+
+extraResources:
+  - from: ../backend
+    to: backend
+    filter:
+      - "**/*"
+      - "!**/__pycache__/**"
+      - "!**/tests/**"
+  - from: ../frontend/dist
+    to: frontend/dist
+
+win:
+  target:
+    - target: nsis
+      arch: x64
+  icon: assets/icon.ico
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  installerLanguages:
+    - ko_KR
+  language: 1042

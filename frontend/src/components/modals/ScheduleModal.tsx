@@ -2,11 +2,6 @@ import { useState, useEffect } from 'react'
 import { X, Clock, Zap, Plus, Trash2 } from 'lucide-react'
 import * as api from '../../api/client'
 
-interface ScheduleEntry {
-  job_id: string
-  config: Record<string, any>
-}
-
 export function ScheduleModal({ onClose }: { onClose: () => void }) {
   const [tab, setTab] = useState<'schedule' | 'trigger'>('schedule')
   const [schedules, setSchedules] = useState<Record<string, any>>({})

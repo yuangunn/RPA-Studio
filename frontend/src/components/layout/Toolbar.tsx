@@ -7,7 +7,7 @@ import { useState } from 'react'
 
 export function Toolbar({ onOpenProject, onOpenSchedule }: { onOpenProject?: () => void; onOpenSchedule?: () => void }) {
   const { t } = useTranslation()
-  const { projectName, dirty, saveProject, newProject, addStep, loadProject } = useProjectStore()
+  const { projectName, dirty, saveProject, newProject, addStep } = useProjectStore()
   const { isRunning, startExecution, stopExecution, addLog } = useExecutionStore()
   const [isRecording, setIsRecording] = useState(false)
 

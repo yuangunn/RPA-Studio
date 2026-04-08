@@ -70,7 +70,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   addStep: async (actionType, params, index, parentId) => {
     const { projectName } = get()
     if (!projectName) return
-    const newStep = await api.addStep(projectName, actionType, params, index, parentId)
+    await api.addStep(projectName, actionType, params, index, parentId)
     // Reload project to get updated steps
     const data = await api.getProject(projectName)
     set({ project: data, dirty: true })

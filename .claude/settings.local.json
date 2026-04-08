@@ -27,7 +27,8 @@
       "Bash(curl -s http://127.0.0.1:8750/api/execution/status/dbb5f4142687)",
       "Bash(\"$PY\" -c \":*)",
       "Bash(curl -s http://127.0.0.1:8750/api/execution/status/e3765d3994fa)",
-      "Bash(PYTHONPATH=backend \"$PY\" -c \":*)"
+      "Bash(PYTHONPATH=backend \"$PY\" -c \":*)",
+      "Bash(npm run:*)"
     ]
   }
 }

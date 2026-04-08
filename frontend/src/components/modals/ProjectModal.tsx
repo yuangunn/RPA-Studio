@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
 import { FolderOpen, Trash2, Plus, X } from 'lucide-react'
 import { useProjectStore } from '../../stores/projectStore'
 import * as api from '../../api/client'
@@ -12,7 +11,6 @@ interface ProjectInfo {
 }
 
 export function ProjectModal({ onClose }: { onClose: () => void }) {
-  const { t } = useTranslation()
   const { loadProject, newProject } = useProjectStore()
   const [projects, setProjects] = useState<ProjectInfo[]>([])
   const [newName, setNewName] = useState('')
