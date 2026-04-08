@@ -91,6 +91,7 @@ class AppState:
             import rpa_studio.actions.image_match
             import rpa_studio.actions.ocr
             import rpa_studio.actions.notify
+            import rpa_studio.actions.web_auto
 
             executor.run(project, context)
             _send({"type": "execution_complete", "success": context.error is None})

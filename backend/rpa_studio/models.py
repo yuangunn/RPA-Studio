@@ -32,9 +32,17 @@ class ActionType(str, Enum):
     # 화면 인식 (2차)
     IMAGE_SEARCH = "image_search"
     OCR_READ = "ocr_read"
-    # 브라우저
+    # 브라우저 (기본)
     BROWSER_OPEN = "browser_open"
     BROWSER_URL = "browser_url"
+    # 웹 자동화 (Playwright)
+    WEB_OPEN = "web_open"
+    WEB_CLICK = "web_click"
+    WEB_TYPE = "web_type"
+    WEB_NAVIGATE = "web_navigate"
+    WEB_EXTRACT = "web_extract"
+    WEB_WAIT = "web_wait"
+    WEB_CLOSE = "web_close"
     # 기타
     NOTIFY = "notify"
 
@@ -61,6 +69,13 @@ ACTION_LABELS: dict[ActionType, str] = {
     ActionType.OCR_READ: "텍스트 읽기(OCR)",
     ActionType.BROWSER_OPEN: "브라우저 열기",
     ActionType.BROWSER_URL: "웹사이트 열기",
+    ActionType.WEB_OPEN: "웹 브라우저 시작",
+    ActionType.WEB_CLICK: "웹 요소 클릭",
+    ActionType.WEB_TYPE: "웹 텍스트 입력",
+    ActionType.WEB_NAVIGATE: "웹 페이지 이동",
+    ActionType.WEB_EXTRACT: "웹 텍스트 추출",
+    ActionType.WEB_WAIT: "웹 요소 대기",
+    ActionType.WEB_CLOSE: "웹 브라우저 닫기",
     ActionType.NOTIFY: "알림 보내기",
 }
 
@@ -84,6 +99,11 @@ ACTION_CATEGORIES = {
         ActionType.FILE_COPY, ActionType.FOLDER_CREATE,
     ],
     "🌐 브라우저": [ActionType.BROWSER_OPEN, ActionType.BROWSER_URL],
+    "🌍 웹 자동화": [
+        ActionType.WEB_OPEN, ActionType.WEB_NAVIGATE, ActionType.WEB_CLICK,
+        ActionType.WEB_TYPE, ActionType.WEB_EXTRACT, ActionType.WEB_WAIT,
+        ActionType.WEB_CLOSE,
+    ],
     "🔍 화면 인식": [ActionType.IMAGE_SEARCH, ActionType.OCR_READ],
     "💬 기타": [ActionType.NOTIFY],
 }

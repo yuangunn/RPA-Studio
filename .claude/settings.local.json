@@ -28,7 +28,10 @@
       "Bash(\"$PY\" -c \":*)",
       "Bash(curl -s http://127.0.0.1:8750/api/execution/status/e3765d3994fa)",
       "Bash(PYTHONPATH=backend \"$PY\" -c \":*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(\"$PY\" -c \"from playwright.sync_api import sync_playwright; print\\(''Playwright OK''\\)\")",
+      "Bash(curl -s http://127.0.0.1:8750/api/actions)",
+      "Bash(\"$PY\" -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(f''''{len\\(d\\)} actions''''\\); [print\\(f''''  {a[\"\"type\"\"]}: {a[\"\"label\"\"]}''''\\) for a in d if a[''''type''''].startswith\\(''''web_''''\\)]\")"
     ]
   }
 }

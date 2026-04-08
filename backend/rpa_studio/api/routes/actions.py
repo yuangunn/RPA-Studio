@@ -100,6 +100,41 @@ ACTION_PARAM_SCHEMAS: dict[str, list[dict]] = {
     "notify": [
         {"key": "message", "label": "알림 메시지", "type": "text"},
     ],
+    # 웹 자동화 (Playwright)
+    "web_open": [
+        {"key": "url", "label": "시작 URL (비워두면 빈 페이지)", "type": "text"},
+        {"key": "headless", "label": "숨김 모드", "type": "combo",
+         "choices": {"false": "브라우저 표시", "true": "숨김 (백그라운드)"}},
+    ],
+    "web_navigate": [
+        {"key": "url", "label": "이동할 웹 주소", "type": "text"},
+    ],
+    "web_click": [
+        {"key": "selector", "label": "CSS 선택자 (예: #btn, .class)", "type": "text"},
+        {"key": "text", "label": "또는 텍스트로 찾기", "type": "text"},
+    ],
+    "web_type": [
+        {"key": "selector", "label": "CSS 선택자", "type": "text"},
+        {"key": "placeholder", "label": "또는 placeholder로 찾기", "type": "text"},
+        {"key": "text", "label": "입력할 텍스트", "type": "text"},
+        {"key": "clear", "label": "기존 내용 지우기", "type": "combo",
+         "choices": {"true": "지우고 입력", "false": "이어서 입력"}},
+    ],
+    "web_extract": [
+        {"key": "selector", "label": "CSS 선택자", "type": "text"},
+        {"key": "attribute", "label": "추출 대상", "type": "combo",
+         "choices": {"textContent": "텍스트 내용", "innerText": "보이는 텍스트",
+                     "value": "입력값", "href": "링크 주소"}},
+        {"key": "save_as", "label": "저장값 이름", "type": "text"},
+    ],
+    "web_wait": [
+        {"key": "selector", "label": "CSS 선택자", "type": "text"},
+        {"key": "state", "label": "대기 조건", "type": "combo",
+         "choices": {"visible": "보일 때까지", "hidden": "숨겨질 때까지",
+                     "attached": "DOM에 존재할 때까지"}},
+        {"key": "timeout", "label": "최대 대기 (초)", "type": "int", "min": 1, "max": 60},
+    ],
+    "web_close": [],
 }
 
 
