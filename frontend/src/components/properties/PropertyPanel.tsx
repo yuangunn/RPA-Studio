@@ -70,9 +70,10 @@ export function PropertyPanel() {
                   key={field.key}
                   onClick={async () => {
                     const { addLog } = useExecutionStore.getState()
-                    addLog('요소 선택 중... 대상 앱 위에 마우스를 올리고 잠시 기다린 후 이 버튼을 다시 클릭하세요')
+                    addLog('🎯 요소 선택 모드 — 대상 앱의 원하는 요소를 클릭하세요 (30초 제한)')
                     try {
-                      const result = await api.pickElementAtCursor()
+                      // start는 클릭을 기다렸다가 클릭된 위치의 요소를 반환
+                      const result = await api.startElementPick()
                       if (result.name || result.automation_id) {
                         handleParamChange('element_info', {
                           name: result.name,
@@ -81,9 +82,9 @@ export function PropertyPanel() {
                           class_name: result.class_name,
                         })
                         handleParamChange('element_path', result.name || result.class_name)
-                        addLog(`✅ 요소 선택: ${result.name} [${result.control_type}]`)
+                        addLog(`✅ 요소 선택 완료: ${result.name} [${result.control_type}]`)
                       } else {
-                        addLog('❌ 요소를 찾지 못했어요. 대상 앱 위에 마우스를 올려주세요.', 'error')
+                        addLog('❌ 요소를 찾지 못했어요.', 'error')
                       }
                     } catch (err: any) {
                       addLog(`❌ 요소 선택 실패: ${err.message}`, 'error')
