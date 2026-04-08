@@ -188,6 +188,16 @@ QTreeWidget::item:selected {
 }
 QTreeWidget::branch {
     background-color: transparent;
+    border: none;
+    image: none;
+}
+QTreeWidget::branch:has-children:closed {
+    image: none;
+    border: none;
+}
+QTreeWidget::branch:has-children:open {
+    image: none;
+    border: none;
 }
 
 /* === Inputs === */

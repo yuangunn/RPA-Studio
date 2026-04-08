@@ -285,15 +285,30 @@ class PropertyPanel(QWidget):
     def _populate_windows(self, combo: QComboBox):
         combo.clear()
         try:
-            import pywinauto
-            desktop = pywinauto.Desktop(backend="uia")
-            windows = desktop.windows()
-            for win in windows:
-                title = win.window_text()
-                if title and title.strip() and title != "":
-                    combo.addItem(title)
-        except Exception:
-            combo.addItem("(창 목록을 가져올 수 없습니다)")
+            import win32gui
+            titles = []
+            def enum_cb(hwnd, _):
+                if win32gui.IsWindowVisible(hwnd):
+                    title = win32gui.GetWindowText(hwnd)
+                    if title and title.strip() and title not in ("Program Manager", ""):
+                        titles.append(title)
+            win32gui.EnumWindows(enum_cb, None)
+            for t in sorted(set(titles)):
+                combo.addItem(t)
+        except ImportError:
+            # win32gui 없으면 psutil 프로세스 이름으로 대체
+            try:
+                import psutil
+                seen = set()
+                for proc in psutil.process_iter(["name", "pid"]):
+                    name = proc.info["name"]
+                    if name and name not in seen and not name.startswith("svc"):
+                        seen.add(name)
+                        combo.addItem(name)
+            except Exception:
+                combo.addItem("(창 목록을 가져올 수 없습니다)")
+        except Exception as e:
+            combo.addItem(f"(오류: {e})")
 
     def _browse_file(self, line_edit: QLineEdit):
         path, _ = QFileDialog.getOpenFileName(self, "파일 선택")

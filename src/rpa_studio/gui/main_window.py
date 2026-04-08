@@ -17,6 +17,8 @@ from rpa_studio.gui.schedule_view import ScheduleDialog
 from rpa_studio.gui.tray import SystemTray
 from rpa_studio.gui.element_picker import ElementPicker
 from rpa_studio.gui.variable_panel import VariablePanel
+from rpa_studio.gui.recorder_toolbar import RecorderToolbar
+from rpa_studio.engine.recorder import RecorderEngine
 from rpa_studio.locale_kr import LABELS
 from rpa_studio.models import Project
 
@@ -36,6 +38,8 @@ class MainWindow(QMainWindow):
         self._project_path = None
         self._exec_thread: ExecutionThread | None = None
         self._element_picker = None
+        self._recorder = RecorderEngine()
+        self._recorder_toolbar: RecorderToolbar | None = None
 
         self._setup_menubar()
         self._setup_toolbar()
@@ -126,11 +130,15 @@ class MainWindow(QMainWindow):
         self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self._var_dock)
         self._var_panel.variables_changed.connect(self._on_variables_changed)
 
-        # Bottom: Log Panel
+        # Bottom: Log Panel (고급 모드에서만 표시)
         self._log_dock = QDockWidget(LABELS["log_title"], self)
         self._log_panel = LogPanel()
         self._log_dock.setWidget(self._log_panel)
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self._log_dock)
+
+        # 기본 모드 초기 상태: 변수/로그 숨김
+        self._var_dock.hide()
+        self._log_dock.hide()
 
     def _setup_shortcuts(self):
         for text, key, slot in [
@@ -219,7 +227,36 @@ class MainWindow(QMainWindow):
         self._log_panel.append_log("--- 완료! ---")
 
     def _on_record(self):
-        pass  # Wired in Task 10
+        if self._recorder.is_running:
+            # Stop recording
+            steps = self._recorder.stop()
+            if self._recorder_toolbar:
+                self._recorder_toolbar.stop()
+                self._recorder_toolbar = None
+            self.show()
+            self.activateWindow()
+            self._record_btn.setText(LABELS["record"])
+            # Add recorded steps
+            for step in steps:
+                self._step_editor.add_step(step)
+            self._log_panel.append_log(f"녹화 완료: {len(steps)}개 단계 추가됨")
+        else:
+            # Start recording
+            self._log_panel.append_log("녹화 시작... (F9로 중지)")
+            self.hide()
+            self._recorder.start()
+            self._recorder_toolbar = RecorderToolbar()
+            self._recorder_toolbar.stop_requested.connect(self._on_record)
+            self._recorder_toolbar.pause_requested.connect(self._on_record_pause)
+            self._recorder_toolbar.start()
+            self._record_btn.setText("⏹ 녹화 중지")
+
+    def _on_record_pause(self):
+        if self._recorder.is_running:
+            if hasattr(self._recorder, '_paused') and self._recorder._paused:
+                self._recorder.resume()
+            else:
+                self._recorder.pause()
 
     def _on_save(self):
         if not self._project_path:
@@ -289,4 +326,7 @@ class MainWindow(QMainWindow):
         self._mode_btn.setText(
             LABELS["mode_advanced"] if checked else LABELS["mode_basic"]
         )
+        # 고급 모드에서만 보이는 패널들
+        self._var_dock.setVisible(checked)
+        self._log_dock.setVisible(checked)
         self.mode_changed.emit(checked)

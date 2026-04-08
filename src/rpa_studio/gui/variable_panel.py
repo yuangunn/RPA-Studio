@@ -24,7 +24,12 @@ class VariablePanel(QWidget):
         self._table.horizontalHeader().setStretchLastSection(True)
         self._table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
         self._table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
-        # Style inherited from global DARK_THEME
+        self._table.setStyleSheet("""
+            QTableWidget { background: #1e1e2e; color: #cdd6f4; border: 1px solid #313244; gridline-color: #313244; }
+            QTableWidget::item { color: #cdd6f4; padding: 6px; }
+            QTableWidget::item:selected { background: #45475a; color: #cdd6f4; }
+            QLineEdit { background: #313244; color: #cdd6f4; border: 1px solid #89b4fa; padding: 4px; }
+        """)
         self._table.cellChanged.connect(self._on_cell_changed)
         layout.addWidget(self._table)
 
