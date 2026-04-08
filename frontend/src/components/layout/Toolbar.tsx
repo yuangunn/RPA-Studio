@@ -1,15 +1,20 @@
 import { useTranslation } from 'react-i18next'
-import { Play, Square, Circle, Save, FolderOpen, FilePlus } from 'lucide-react'
+import { Play, Square, Circle, Save, FolderOpen, FilePlus, FolderOpen as Open } from 'lucide-react'
 import { useProjectStore } from '../../stores/projectStore'
 import { useExecutionStore } from '../../stores/executionStore'
+import * as api from '../../api/client'
+import { useState } from 'react'
 
 export function Toolbar() {
   const { t } = useTranslation()
-  const { projectName, dirty, saveProject, newProject } = useProjectStore()
-  const { isRunning, startExecution, stopExecution } = useExecutionStore()
+  const { projectName, dirty, saveProject, newProject, addStep, loadProject } = useProjectStore()
+  const { isRunning, startExecution, stopExecution, addLog } = useExecutionStore()
+  const [isRecording, setIsRecording] = useState(false)
 
-  const handleRun = () => {
-    if (projectName) startExecution(projectName)
+  const handleRun = async () => {
+    if (!projectName) return
+    await saveProject() // 자동 저장 후 실행
+    startExecution(projectName)
   }
 
   const handleNew = async () => {
@@ -44,8 +49,29 @@ export function Toolbar() {
         <Square size={14} /> {t('toolbar.stop')}
       </button>
 
-      <button className="flex items-center gap-1.5 px-3 py-1.5 bg-peach/20 text-peach rounded-lg text-xs font-semibold hover:bg-peach/30 transition-colors">
-        <Circle size={14} /> {t('toolbar.record')}
+      <button
+        onClick={async () => {
+          if (isRecording) {
+            const result = await api.stopRecording()
+            setIsRecording(false)
+            addLog(`녹화 완료: ${result.step_count}개 단계 캡처됨`)
+            // 캡처된 스텝들을 프로젝트에 추가
+            for (const step of result.steps || []) {
+              await addStep(step.type, step.params)
+            }
+          } else {
+            await api.startRecording()
+            setIsRecording(true)
+            addLog('녹화 시작... 작업을 수행한 후 다시 눌러 중지하세요')
+          }
+        }}
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+          isRecording
+            ? 'bg-red text-crust animate-pulse'
+            : 'bg-peach/20 text-peach hover:bg-peach/30'
+        }`}
+      >
+        <Circle size={14} /> {isRecording ? '⏹ 녹화 중지' : t('toolbar.record')}
       </button>
 
       <div className="flex-1" />

@@ -13,6 +13,7 @@ from rpa_studio.api.routes.projects import router as projects_router
 from rpa_studio.api.routes.execution import router as execution_router
 from rpa_studio.api.routes.recorder import router as recorder_router
 from rpa_studio.api.routes.scheduler import router as scheduler_router
+from rpa_studio.api.routes.element_picker import router as element_picker_router
 
 app = FastAPI(
     title="RPA Studio API",
@@ -32,8 +33,14 @@ app.include_router(health_router, prefix="/api", tags=["System"])
 app.include_router(actions_router, prefix="/api", tags=["Actions"])
 app.include_router(projects_router, prefix="/api", tags=["Projects"])
 app.include_router(execution_router, prefix="/api", tags=["Execution"])
+
+# WebSocket routes need to be mounted WITHOUT /api prefix
+# so that ws://host/ws/execution/{id} works directly
+from rpa_studio.api.routes.execution import execution_ws
+app.websocket("/ws/execution/{exec_id}")(execution_ws)
 app.include_router(recorder_router, prefix="/api", tags=["Recorder"])
 app.include_router(scheduler_router, prefix="/api", tags=["Scheduler"])
+app.include_router(element_picker_router, prefix="/api", tags=["Element Picker"])
 
 
 def main():

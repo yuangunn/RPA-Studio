@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Crosshair } from 'lucide-react'
 import { useProjectStore } from '../../stores/projectStore'
+import { useExecutionStore } from '../../stores/executionStore'
 import * as api from '../../api/client'
 import type { ParamField } from '../../types/models'
 
@@ -66,9 +68,30 @@ export function PropertyPanel() {
               return (
                 <button
                   key={field.key}
-                  className="w-full py-2.5 bg-blue/10 text-blue border border-blue/30 rounded-lg text-xs font-semibold hover:bg-blue/20 transition-colors"
+                  onClick={async () => {
+                    const { addLog } = useExecutionStore.getState()
+                    addLog('요소 선택 중... 대상 앱 위에 마우스를 올리고 잠시 기다린 후 이 버튼을 다시 클릭하세요')
+                    try {
+                      const result = await api.pickElementAtCursor()
+                      if (result.name || result.automation_id) {
+                        handleParamChange('element_info', {
+                          name: result.name,
+                          control_type: result.control_type,
+                          automation_id: result.automation_id,
+                          class_name: result.class_name,
+                        })
+                        handleParamChange('element_path', result.name || result.class_name)
+                        addLog(`✅ 요소 선택: ${result.name} [${result.control_type}]`)
+                      } else {
+                        addLog('❌ 요소를 찾지 못했어요. 대상 앱 위에 마우스를 올려주세요.', 'error')
+                      }
+                    } catch (err: any) {
+                      addLog(`❌ 요소 선택 실패: ${err.message}`, 'error')
+                    }
+                  }}
+                  className="w-full py-2.5 bg-blue/10 text-blue border border-blue/30 rounded-lg text-xs font-semibold hover:bg-blue/20 transition-colors flex items-center justify-center gap-2"
                 >
-                  {field.label}
+                  <Crosshair size={14} /> {field.label}
                 </button>
               )
             }

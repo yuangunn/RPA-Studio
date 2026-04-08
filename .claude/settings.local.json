@@ -17,7 +17,17 @@
       "Bash(taskkill /f /im electron.exe)",
       "Bash(taskkill //f //im electron.exe)",
       "Bash(taskkill //f //pid 19668)",
-      "Bash(taskkill //f //pid 64228)"
+      "Bash(taskkill //f //pid 64228)",
+      "Bash(PY=\"/c/Users/Helios_Neo_18/AppData/Local/Programs/Python/Python312/python.exe\")",
+      "Bash(\"$PY\" -m pytest backend/tests/ -q)",
+      "Bash(curl -s http://127.0.0.1:8750/api/health)",
+      "Bash(curl -s -X POST http://127.0.0.1:8750/api/element-picker/pick)",
+      "Bash(curl -s http://127.0.0.1:8750/api/projects)",
+      "Bash(curl -s -X POST http://127.0.0.1:8750/api/execution/run -H \"Content-Type: application/json; charset=utf-8\" -d \"{\"\"project_name\"\":\"\"test_proj\"\"}\")",
+      "Bash(curl -s http://127.0.0.1:8750/api/execution/status/dbb5f4142687)",
+      "Bash(\"$PY\" -c \":*)",
+      "Bash(curl -s http://127.0.0.1:8750/api/execution/status/e3765d3994fa)",
+      "Bash(PYTHONPATH=backend \"$PY\" -c \":*)"
     ]
   }
 }

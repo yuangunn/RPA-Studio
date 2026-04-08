@@ -98,5 +98,9 @@ export const startRecording = () => request<any>('/recorder/start', { method: 'P
 export const stopRecording = () => request<any>('/recorder/stop', { method: 'POST' })
 export const getRecorderStatus = () => request<any>('/recorder/status')
 
+// --- Element Picker ---
+export const pickElementAtCursor = () => request<any>('/element-picker/pick', { method: 'POST' })
+export const getElementAt = (x: number, y: number) => request<any>(`/element-picker/at/${x}/${y}`)
+
 // --- Locale ---
 export const getLocale = () => request<any>('/locale')

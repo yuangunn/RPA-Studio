@@ -38,9 +38,12 @@ async def list_projects():
 
 @router.post("/projects")
 async def create_project(req: ProjectCreateRequest):
-    """Create a new empty project."""
-    proj = Project(name=req.name)
+    """Create a new empty project. If it already exists, just return it."""
     path = _project_path(req.name)
+    if path.exists():
+        proj = load_project(path)
+        return {"name": proj.name, "file_path": str(path)}
+    proj = Project(name=req.name)
     save_project(proj, path)
     return {"name": proj.name, "file_path": str(path)}
 

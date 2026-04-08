@@ -9,14 +9,19 @@ import { LogViewer } from './components/log/LogViewer'
 import { useProjectStore } from './stores/projectStore'
 
 export default function App() {
-  const { newProject, projectName } = useProjectStore()
+  const { newProject, loadProject, projectName } = useProjectStore()
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
     async function init() {
       await initApiClient()
       if (!projectName) {
-        await newProject('새 프로젝트').catch(console.error)
+        // Try to load existing project, create new if not found
+        try {
+          await loadProject('새 프로젝트')
+        } catch {
+          await newProject('새 프로젝트')
+        }
       }
       setReady(true)
     }
