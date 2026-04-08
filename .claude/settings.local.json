@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p backend)",
+      "Bash(cp -r src/rpa_studio/models.py src/rpa_studio/locale_kr.py src/rpa_studio/__init__.py backend/)",
+      "Bash(cp -r src/rpa_studio/engine backend/)",
+      "Bash(cp -r src/rpa_studio/actions backend/)",
+      "Bash(cp -r src/rpa_studio/scheduler backend/)",
+      "Bash(rm -rf tests docs)",
+      "Bash(find backend:*)"
+    ]
+  }
+}
