@@ -1,0 +1,68 @@
+{
+  "toolbar": {
+    "run": "▶ 실행",
+    "stop": "⏹ 중지",
+    "record": "⏺ 녹화",
+    "save": "저장",
+    "open": "열기",
+    "new": "새 프로젝트",
+    "mode_basic": "기본 모드",
+    "mode_advanced": "고급 모드"
+  },
+  "palette": {
+    "title": "작업 추가",
+    "search": "작업 검색..."
+  },
+  "editor": {
+    "empty": "왼쪽에서 작업을 드래그하거나 더블클릭하여 추가하세요",
+    "step_count": "{{count}}개 단계"
+  },
+  "properties": {
+    "title": "속성 편집",
+    "no_selection": "단계를 선택하세요",
+    "wait_after": "실행 후 대기 (초)",
+    "pick_element": "🎯 요소 선택하기",
+    "help": "💡 도움말"
+  },
+  "log": {
+    "title": "📝 실행 로그",
+    "clear": "지우기",
+    "empty": "로그가 없습니다"
+  },
+  "variables": {
+    "title": "📦 저장값",
+    "name": "이름",
+    "value": "값",
+    "add": "+ 추가",
+    "delete": "삭제"
+  },
+  "project": {
+    "new_name": "새 프로젝트",
+    "save_success": "저장 완료!",
+    "load_success": "프로젝트 로드 완료!"
+  },
+  "execution": {
+    "started": "--- 실행 시작 ---",
+    "finished": "--- 완료! ---",
+    "no_steps": "실행할 단계가 없습니다."
+  },
+  "errors": {
+    "app_not_found": "앱을 찾을 수 없어요. 앱이 실행 중인지 확인해주세요.",
+    "step_failed": "{{step_num}}번째 단계에서 문제가 생겼어요: {{message}}"
+  },
+  "schedule": {
+    "title": "스케줄 관리",
+    "daily": "매일",
+    "weekly": "매주",
+    "monthly": "매월"
+  },
+  "tray": {
+    "open": "열기",
+    "schedule": "스케줄 관리",
+    "running": "실행 중 작업",
+    "quit": "종료"
+  },
+  "actions": {
+    "locked": "이 기능은 업데이트 예정입니다."
+  }
+}

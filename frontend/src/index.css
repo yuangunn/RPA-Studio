@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+/* Catppuccin Mocha custom colors */
+@theme {
+  --color-base: #1e1e2e;
+  --color-mantle: #181825;
+  --color-crust: #11111b;
+  --color-surface0: #313244;
+  --color-surface1: #45475a;
+  --color-surface2: #585b70;
+  --color-overlay0: #6c7086;
+  --color-overlay1: #7f849c;
+  --color-text: #cdd6f4;
+  --color-subtext: #a6adc8;
+  --color-blue: #89b4fa;
+  --color-green: #a6e3a1;
+  --color-red: #f38ba8;
+  --color-peach: #fab387;
+  --color-mauve: #cba6f7;
+  --color-teal: #94e2d5;
+  --color-yellow: #f9e2af;
+  --color-indigo: #5c6bc0;
+  --color-orange: #ef6c00;
+}
+
+body {
+  margin: 0;
+  background-color: #1e1e2e;
+  color: #cdd6f4;
+  font-family: 'Segoe UI', 'Malgun Gothic', -apple-system, sans-serif;
+  overflow: hidden;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #45475a; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #585b70; }
