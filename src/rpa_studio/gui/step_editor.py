@@ -20,9 +20,17 @@ class StepEditor(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(16, 8, 16, 8)
 
+        # Header row
+        from PyQt6.QtWidgets import QHBoxLayout
+        header_row = QHBoxLayout()
         self._header = QLabel("\U0001f4cb \uc0c8 \ud504\ub85c\uc81d\ud2b8")
-        self._header.setStyleSheet("color: #c9d1d9; font-size: 14px; font-weight: bold;")
-        layout.addWidget(self._header)
+        self._header.setStyleSheet("color: #cdd6f4; font-size: 15px; font-weight: 700;")
+        header_row.addWidget(self._header)
+        header_row.addStretch()
+        self._count_label = QLabel("0\uac1c \ub2e8\uacc4")
+        self._count_label.setStyleSheet("color: #6c7086; font-size: 12px;")
+        header_row.addWidget(self._count_label)
+        layout.addLayout(header_row)
 
         self._scroll = QScrollArea()
         self._scroll.setWidgetResizable(True)
@@ -43,7 +51,11 @@ class StepEditor(QWidget):
         self._step_container.dropEvent = self.dropEvent
 
         add_btn = QPushButton(LABELS["add_step"])
-        add_btn.setStyleSheet("QPushButton { border: 2px dashed #30363d; padding: 12px; color: #484f58; }")
+        add_btn.setStyleSheet(
+            "QPushButton { border: 2px dashed #45475a; border-radius: 10px; "
+            "padding: 14px; color: #6c7086; font-size: 13px; background: transparent; }"
+            "QPushButton:hover { border-color: #89b4fa; color: #89b4fa; background: #89b4fa11; }"
+        )
         layout.addWidget(add_btn)
 
         self.setAcceptDrops(True)
@@ -102,6 +114,8 @@ class StepEditor(QWidget):
             idx += 1
             for ci, child in enumerate(step.children):
                 self._add_step_widget(child, f"{idx-1}-{ci+1}", indent=1)
+
+        self._count_label.setText(f"{len(self._steps)}\uac1c \ub2e8\uacc4")
 
     def _add_step_widget(self, step: Step, index, indent: int):
         w = StepWidget(step, index, indent=indent)

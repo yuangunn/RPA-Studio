@@ -121,7 +121,7 @@ class PropertyPanel(QWidget):
         layout.setContentsMargins(8, 8, 8, 8)
 
         self._title = QLabel(LABELS["prop_title"])
-        self._title.setStyleSheet("color: #8b949e; font-size: 11px; font-weight: bold; text-transform: uppercase;")
+        self._title.setStyleSheet("color: #a6adc8; font-size: 12px; font-weight: 700;")
         layout.addWidget(self._title)
 
         scroll = QScrollArea()
@@ -135,13 +135,14 @@ class PropertyPanel(QWidget):
 
         self._help_box = QGroupBox(LABELS["prop_help"])
         self._help_box.setStyleSheet(
-            "QGroupBox { color: #d2a8ff; background: #1a1520; border: 1px solid #6e40c9; border-radius: 6px; padding: 12px; margin-top: 8px; }"
-            "QGroupBox::title { color: #d2a8ff; }"
+            "QGroupBox { color: #cba6f7; background: #1e1e2e; border: 1px solid #45475a; "
+            "border-radius: 10px; padding: 14px; margin-top: 12px; }"
+            "QGroupBox::title { color: #cba6f7; font-weight: 600; }"
         )
         help_layout = QVBoxLayout(self._help_box)
         self._help_label = QLabel("")
         self._help_label.setWordWrap(True)
-        self._help_label.setStyleSheet("color: #8b949e; font-size: 11px;")
+        self._help_label.setStyleSheet("color: #a6adc8; font-size: 12px; line-height: 1.4;")
         help_layout.addWidget(self._help_label)
         layout.addWidget(self._help_box)
         self._help_box.hide()
@@ -168,7 +169,11 @@ class PropertyPanel(QWidget):
                 # Special widgets like element picker
                 if wtype == "element_picker":
                     btn = QPushButton(label)
-                    btn.setStyleSheet("QPushButton { background: #161b22; color: #58a6ff; border: 1px solid #30363d; border-radius: 4px; padding: 8px; }")
+                    btn.setStyleSheet(
+                        "QPushButton { background: #89b4fa22; color: #89b4fa; "
+                        "border: 1px solid #89b4fa44; border-radius: 8px; padding: 10px; font-weight: 600; }"
+                        "QPushButton:hover { background: #89b4fa33; border-color: #89b4fa; }"
+                    )
                     btn.clicked.connect(self.pick_element_requested.emit)
                     self._form_layout.addWidget(btn)
                 continue
@@ -257,7 +262,7 @@ class PropertyPanel(QWidget):
 
     def _add_field(self, label: str, widget: QWidget):
         lbl = QLabel(label)
-        lbl.setStyleSheet("color: #8b949e; font-size: 12px; margin-top: 8px;")
+        lbl.setStyleSheet("color: #6c7086; font-size: 11px; font-weight: 600; margin-top: 10px;")
         self._form_layout.addWidget(lbl)
         self._form_layout.addWidget(widget)
 

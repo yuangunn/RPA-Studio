@@ -15,8 +15,8 @@ class VariablePanel(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(4, 4, 4, 4)
 
-        header = QLabel("📦 저장값 관리")
-        header.setStyleSheet("color: #8b949e; font-size: 11px; font-weight: bold;")
+        header = QLabel("\U0001f4e6 \uc800\uc7a5\uac12 \uad00\ub9ac")
+        header.setStyleSheet("color: #a6adc8; font-size: 12px; font-weight: 700;")
         layout.addWidget(header)
 
         self._table = QTableWidget(0, 2)
@@ -24,21 +24,24 @@ class VariablePanel(QWidget):
         self._table.horizontalHeader().setStretchLastSection(True)
         self._table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
         self._table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
-        self._table.setStyleSheet(
-            "QTableWidget { background: #0d1117; color: #c9d1d9; border: 1px solid #30363d; gridline-color: #30363d; }"
-            "QHeaderView::section { background: #161b22; color: #8b949e; border: 1px solid #30363d; padding: 4px; }"
-            "QTableWidget::item { padding: 4px; }"
-            "QTableWidget::item:selected { background: #1f6feb33; }"
-        )
+        # Style inherited from global DARK_THEME
         self._table.cellChanged.connect(self._on_cell_changed)
         layout.addWidget(self._table)
 
         btn_row = QHBoxLayout()
-        add_btn = QPushButton("+ 추가")
-        add_btn.setStyleSheet("QPushButton { background: #238636; color: white; border-radius: 4px; padding: 4px 12px; }")
+        add_btn = QPushButton("+ \ucd94\uac00")
+        add_btn.setStyleSheet(
+            "QPushButton { background: #a6e3a1; color: #1e1e2e; border: none; "
+            "border-radius: 8px; padding: 6px 14px; font-weight: 600; }"
+            "QPushButton:hover { background: #b4f0a8; }"
+        )
         add_btn.clicked.connect(self._add_variable)
-        del_btn = QPushButton("삭제")
-        del_btn.setStyleSheet("QPushButton { background: #da3633; color: white; border-radius: 4px; padding: 4px 12px; }")
+        del_btn = QPushButton("\uc0ad\uc81c")
+        del_btn.setStyleSheet(
+            "QPushButton { background: #f38ba8; color: #1e1e2e; border: none; "
+            "border-radius: 8px; padding: 6px 14px; font-weight: 600; }"
+            "QPushButton:hover { background: #f5a0b8; }"
+        )
         del_btn.clicked.connect(self._delete_variable)
         btn_row.addWidget(add_btn)
         btn_row.addWidget(del_btn)

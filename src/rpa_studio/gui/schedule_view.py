@@ -14,20 +14,9 @@ class ScheduleDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle(LABELS["schedule_title"])
         self.setMinimumSize(500, 400)
-        self.setStyleSheet("""
-            QDialog { background: #0d1117; color: #c9d1d9; }
-            QTabWidget::pane { border: 1px solid #30363d; background: #0d1117; }
-            QTabBar::tab { background: #161b22; color: #8b949e; padding: 8px 16px; border: 1px solid #30363d; }
-            QTabBar::tab:selected { background: #0d1117; color: #c9d1d9; border-bottom: none; }
-            QListWidget { background: #0d1117; border: 1px solid #30363d; color: #c9d1d9; }
-            QListWidget::item:selected { background: #1f6feb33; }
-            QPushButton { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; border-radius: 4px; padding: 6px 12px; }
-            QPushButton:hover { background: #30363d; }
-            QLineEdit, QComboBox, QSpinBox, QTimeEdit { background: #161b22; color: #c9d1d9; border: 1px solid #30363d; border-radius: 4px; padding: 4px; }
-            QLabel { color: #8b949e; }
-            QGroupBox { color: #8b949e; border: 1px solid #30363d; border-radius: 4px; margin-top: 8px; padding-top: 16px; }
-            QCheckBox { color: #c9d1d9; }
-        """)
+        # Style inherited from global DARK_THEME via parent
+        from rpa_studio.gui.style import DARK_THEME
+        self.setStyleSheet(DARK_THEME)
 
         layout = QVBoxLayout(self)
         tabs = QTabWidget()

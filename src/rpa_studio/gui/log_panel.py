@@ -12,10 +12,7 @@ class LogPanel(QWidget):
 
         self._log_text = QTextEdit()
         self._log_text.setReadOnly(True)
-        self._log_text.setStyleSheet(
-            "QTextEdit { background: #0d1117; color: #c9d1d9; border: none; "
-            "font-family: 'Consolas', 'Courier New', monospace; font-size: 12px; }"
-        )
+        # Style is inherited from DARK_THEME QTextEdit rule
         layout.addWidget(self._log_text)
 
         btn_row = QHBoxLayout()
